@@ -81,6 +81,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
+import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -634,7 +635,7 @@ fun MoreSettingsScreen(
                     .graphicsLayer {
                         alpha = 0.99f
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            renderEffect = RenderEffect.createBlurEffect(
+                            renderEffect = BlurEffect(
                                 CardConfig.cardBlur, CardConfig.cardBlur, TileMode.Mirror
                             )
                         }
