@@ -15,12 +15,15 @@ import androidx.compose.ui.unit.dp
 object CardConfig {
     // 卡片透明度
     var cardAlpha by mutableFloatStateOf(1f)
+    // 卡片模糊
+    var cardBlur by mutableFloatStateOf(0f)
     // 卡片亮度
     var cardDim by mutableFloatStateOf(0f)
     // 卡片阴影
     var cardElevation by mutableStateOf(0.dp)
     var isShadowEnabled by mutableStateOf(true)
     var isCustomAlphaSet by mutableStateOf(false)
+    var isCustomBlurSet by mutableStateOf(false)
     var isCustomDimSet by mutableStateOf(false)
     var isUserDarkModeEnabled by mutableStateOf(false)
     var isUserLightModeEnabled by mutableStateOf(false)
@@ -33,10 +36,12 @@ object CardConfig {
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putFloat("card_alpha", cardAlpha)
+            putFloat("card_blur", cardBlur)
             putFloat("card_dim", cardDim)
             putBoolean("custom_background_enabled", isCustomBackgroundEnabled)
             putBoolean("is_shadow_enabled", isShadowEnabled)
             putBoolean("is_custom_alpha_set", isCustomAlphaSet)
+            putBoolean("is_custom_blur_set", isCustomBlurSet)
             putBoolean("is_custom_dim_set", isCustomDimSet)
             putBoolean("is_user_dark_mode_enabled", isUserDarkModeEnabled)
             putBoolean("is_user_light_mode_enabled", isUserLightModeEnabled)
@@ -50,10 +55,12 @@ object CardConfig {
     fun load(context: Context) {
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         cardAlpha = prefs.getFloat("card_alpha", 1f)
+        cardBlur = prefs.getFloat("card_blur", 0f)
         cardDim = prefs.getFloat("card_dim", 0f)
         isCustomBackgroundEnabled = prefs.getBoolean("custom_background_enabled", false)
         isShadowEnabled = prefs.getBoolean("is_shadow_enabled", true)
         isCustomAlphaSet = prefs.getBoolean("is_custom_alpha_set", false)
+        isCustomBlurSet = prefs.getBoolean("is_custom_blur_set", false)
         isCustomDimSet = prefs.getBoolean("is_custom_dim_set", false)
         isUserDarkModeEnabled = prefs.getBoolean("is_user_dark_mode_enabled", false)
         isUserLightModeEnabled = prefs.getBoolean("is_user_light_mode_enabled", false)
@@ -74,6 +81,9 @@ object CardConfig {
     fun setThemeDefaults(isDarkMode: Boolean) {
         if (!isCustomAlphaSet) {
             cardAlpha = 1f
+        }
+        if (!isCustomBlurSet) {
+            cardBlur = 1f
         }
         if (!isCustomDimSet) {
             cardDim = if (isDarkMode) 0.5f else 0f

@@ -50,6 +50,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -240,6 +241,7 @@ fun MoreSettingsScreen(
 
     // 卡片配置状态
     var cardAlpha by rememberSaveable { mutableFloatStateOf(CardConfig.cardAlpha) }
+    var cardBlur by rememberSaveable { mutableFloatStateOf(CardConfig.cardBlur) }
     var cardDim by rememberSaveable { mutableFloatStateOf(CardConfig.cardDim) }
     var isCustomBackgroundEnabled by rememberSaveable {
         mutableStateOf(ThemeConfig.customBackgroundUri != null)
@@ -399,6 +401,7 @@ fun MoreSettingsScreen(
         // 加载设置
         CardConfig.load(context)
         cardAlpha = CardConfig.cardAlpha
+        cardBlur = CardConfig.cardBlur
         cardDim = CardConfig.cardDim
         isCustomBackgroundEnabled = ThemeConfig.customBackgroundUri != null
 
@@ -956,6 +959,59 @@ fun MoreSettingsScreen(
                             )
                         )
 
+                        // 模糊度滑动条
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.Opacity,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.settings_card_alpha),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "${(cardBlur * 100).roundToInt()}%",
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+
+                        val blurSliderValue by animateFloatAsState(
+                            targetValue = cardBlur,
+                            label = "Blur Slider Animation"
+                        )
+
+                        Slider(
+                            value = blurSliderValue,
+                            onValueChange = { newValue ->
+                                cardBlur = newValue
+                                CardConfig.cardBlur = newValue
+                                CardConfig.isCustomBlurSet = true
+                                prefs.edit {
+                                    putBoolean("is_custom_blur_set", true)
+                                    putFloat("card_blur", newValue)
+                                }
+                            },
+                            onValueChangeFinished = {
+                                coroutineScope.launch(Dispatchers.IO) {
+                                    saveCardConfig(context)
+                                }
+                            },
+                            valueRange = 0f..1f,
+                            steps = 100,
+                            colors = SliderDefaults.colors(
+                                thumbColor = MaterialTheme.colorScheme.primary,
+                                activeTrackColor = MaterialTheme.colorScheme.primary,
+                                inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        )
+
                         // 亮度调节滑动条
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -1186,7 +1242,8 @@ fun SettingsCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = SETTINGS_GROUP_SPACING),
+            .padding(bottom = SETTINGS_GROUP_SPACING)
+            .blur(radius = CardConfig.cardBlur.dp),
         colors = getCardColors(MaterialTheme.colorScheme.surfaceContainerHigh),
         elevation = getCardElevation(),
         shape = MaterialTheme.shapes.medium
