@@ -50,7 +50,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -72,6 +71,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.roundToInt
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
@@ -82,6 +82,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.sukisu.ultra.ui.theme.getCardColors
 import com.sukisu.ultra.ui.theme.getCardElevation
@@ -627,7 +630,19 @@ fun MoreSettingsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                modifier = Modifier.blur(radius = CardConfig.cardBlur.dp),
+                modifier = Modifier
+                    .graphicsLayer {
+                        alpha = 0.99f
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            renderEffect = RenderEffect.createBlurEffect(
+                                CardConfig.cardBlur, CardConfig.cardBlur, Shader.TileMode.MIRROR
+                            )
+                        }
+                    }
+                    .background(
+                        MaterialTheme.colorScheme.surfaceContainerLow
+                            .copy(alpha = CardConfig.cardAlpha)
+                    ),
                 title = {
                     Text(
                         text = stringResource(R.string.more_settings),
@@ -645,8 +660,8 @@ fun MoreSettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = CardConfig.cardAlpha),
-                    scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = CardConfig.cardAlpha)
+                    containerColor = Color.Transparent,
+                    scrolledContainerColor = Color.Transparent
                 ),
                 windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
                 scrollBehavior = scrollBehavior
