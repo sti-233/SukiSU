@@ -627,6 +627,7 @@ fun MoreSettingsScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
+                modifier = Modifier.blur(radius = CardConfig.cardBlur.dp),
                 title = {
                     Text(
                         text = stringResource(R.string.more_settings),
@@ -660,7 +661,6 @@ fun MoreSettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
-                .blur(radius = CardConfig.cardBlur.dp)
         ) {
             // ========== 外观设置部分 ==========
             SettingsCard(
@@ -979,7 +979,7 @@ fun MoreSettingsScreen(
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = "${(cardBlur * 100).roundToInt()}%",
+                                text = "${cardBlur.roundToInt()} dp",
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         }
@@ -1005,8 +1005,8 @@ fun MoreSettingsScreen(
                                     saveCardConfig(context)
                                 }
                             },
-                            valueRange = 0f..20f,
-                            steps = 20,
+                            valueRange = 0f..5f,
+                            steps = 10,
                             colors = SliderDefaults.colors(
                                 thumbColor = MaterialTheme.colorScheme.primary,
                                 activeTrackColor = MaterialTheme.colorScheme.primary,
