@@ -660,6 +660,7 @@ fun MoreSettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp)
+                .blur(radius = CardConfig.cardBlur.dp)
         ) {
             // ========== 外观设置部分 ==========
             SettingsCard(
@@ -872,6 +873,7 @@ fun MoreSettingsScreen(
                             context.saveCustomBackground(null)
                             isCustomBackgroundEnabled = false
                             CardConfig.cardAlpha = 1f
+                            CardConfig.cardAlpha = 0f
                             CardConfig.cardDim = 0f
                             CardConfig.isCustomAlphaSet = false
                             CardConfig.isCustomDimSet = false
@@ -951,7 +953,7 @@ fun MoreSettingsScreen(
                                 }
                             },
                             valueRange = 0f..1f,
-                            steps = 20,
+                            steps = 19,
                             colors = SliderDefaults.colors(
                                 thumbColor = MaterialTheme.colorScheme.primary,
                                 activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -1003,8 +1005,8 @@ fun MoreSettingsScreen(
                                     saveCardConfig(context)
                                 }
                             },
-                            valueRange = 0f..1f,
-                            steps = 100,
+                            valueRange = 0f..20f,
+                            steps = 20,
                             colors = SliderDefaults.colors(
                                 thumbColor = MaterialTheme.colorScheme.primary,
                                 activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -1057,7 +1059,7 @@ fun MoreSettingsScreen(
                                 }
                             },
                             valueRange = 0f..1f,
-                            steps = 20,
+                            steps = 19,
                             colors = SliderDefaults.colors(
                                 thumbColor = MaterialTheme.colorScheme.primary,
                                 activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -1242,8 +1244,7 @@ fun SettingsCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = SETTINGS_GROUP_SPACING)
-            .blur(radius = CardConfig.cardBlur.dp),
+            .padding(bottom = SETTINGS_GROUP_SPACING),
         colors = getCardColors(MaterialTheme.colorScheme.surfaceContainerHigh),
         elevation = getCardElevation(),
         shape = MaterialTheme.shapes.medium
